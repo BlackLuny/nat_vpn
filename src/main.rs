@@ -107,10 +107,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     env_logger::init();
     let opts = Opts::parse();
     let mut driver = DefaultDriver::new().map_err(|_| anyhow!("create driver error"))?;
-    let if_config = DefaultDriver::if_config_builder().name(opts.itf).build()?;
+    let if_config = DefaultInterface::config_builder().name(opts.itf).build()?;
     let tun = DefaultInterface::new_up(&mut driver, if_config)
         .map_err(|_| anyhow!("new_up error"))?;
-    tun.handle().add_ip(opts.ip.parse()?);
+    tun.handle().add_address(opts.ip.parse()?)?;
 
     let local_key = generate_ed25519(opts.secret_key_seed);
     let local_peer_id = PeerId::from(local_key.public());
